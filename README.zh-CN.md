@@ -48,9 +48,9 @@ Finder / Xcode / Safari / macOS App
 ```bash
 git clone https://github.com/kiminih/codex-computer-use-remote.git codex-computer-use-remote
 cd codex-computer-use-remote
-./scripts/install.sh
-./scripts/doctor.sh
-./scripts/smoke-local.sh
+bash scripts/install.sh
+bash scripts/doctor.sh
+bash scripts/smoke-local.sh
 ```
 
 安装脚本会：
@@ -83,7 +83,7 @@ activity 时 fail closed。
 ## 本机验证
 
 ```bash
-./scripts/smoke-local.sh
+bash scripts/smoke-local.sh
 ```
 
 预期：
@@ -106,7 +106,7 @@ Mac 本地 Finder 正常，但 SSH 直接调用返回 `-600 procNotFound`。
 安装 GUI/Aqua launcher：
 
 ```bash
-./scripts/install.sh --with-ssh-gui
+bash scripts/install.sh --with-ssh-gui
 ```
 
 它会创建一个 root-owned 固定 launcher，通过 `launchctl asuser` 进入当前桌面
@@ -145,7 +145,7 @@ access to kTCCServiceAppleEvents denied
 诊断：
 
 ```bash
-./scripts/tcc-diagnose.sh
+bash scripts/tcc-diagnose.sh
 ```
 
 本项目默认**不会自动改 TCC.db**。如果确认是这个问题，可参考 `macuse` 的 SSH
