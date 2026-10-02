@@ -53,9 +53,9 @@ with `modelTurnsStarted: 0`.
 ```bash
 git clone https://github.com/kiminih/codex-computer-use-remote.git codex-computer-use-remote
 cd codex-computer-use-remote
-./scripts/install.sh
-./scripts/doctor.sh
-./scripts/smoke-local.sh
+bash scripts/install.sh
+bash scripts/doctor.sh
+bash scripts/smoke-local.sh
 ```
 
 The installer:
@@ -91,7 +91,7 @@ See [Architecture](docs/ARCHITECTURE.md).
 ## Local smoke test
 
 ```bash
-./scripts/smoke-local.sh
+bash scripts/smoke-local.sh
 ```
 
 Expected shape:
@@ -117,7 +117,7 @@ tested host, local Finder inspection succeeded while direct SSH could return
 Install the optional root-owned GUI-session launcher:
 
 ```bash
-./scripts/install.sh --with-ssh-gui
+bash scripts/install.sh --with-ssh-gui
 ```
 
 This creates:
@@ -173,7 +173,7 @@ SSH can also expose an AppleEvents attribution issue involving
 `/usr/libexec/sshd-keygen-wrapper`. Run:
 
 ```bash
-./scripts/tcc-diagnose.sh
+bash scripts/tcc-diagnose.sh
 ```
 
 This repository intentionally does not rewrite TCC.db automatically. See
@@ -197,13 +197,13 @@ working upstream revision before publishing a stable release.
 ## Uninstall
 
 ```bash
-./scripts/uninstall.sh
+bash scripts/uninstall.sh
 ```
 
 To also remove the per-user copied runtime:
 
 ```bash
-./scripts/uninstall.sh --remove-runtime
+bash scripts/uninstall.sh --remove-runtime
 ```
 
 ChatGPT.app is never removed or modified.
