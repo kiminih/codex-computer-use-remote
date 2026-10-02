@@ -1,0 +1,6 @@
+Host mac-host
+    HostName 192.168.1.20
+    User your-mac-user
+    IdentityFile ~/.ssh/mac-computer-use
+    IdentitiesOnly yes
+    RequestTTY no
