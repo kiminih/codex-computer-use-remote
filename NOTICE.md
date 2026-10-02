@@ -1,15 +1,6 @@
 # Notices
 
-Version 0.2.0 is self-contained. It does not clone, download, import or install
-`tmustier/codex-computer-use-mcp` at installation or runtime.
-
-The initial protocol sequencing, native tool interface and isolation approach
-were informed by Thomas Mustier's MIT-licensed `codex-computer-use-mcp`:
-https://github.com/tmustier/codex-computer-use-mcp
-
-The standalone implementation reorganizes that approach and incorporates this
-project's runtime-directory, SQLite-home and nested-Codex PATH compatibility work.
-The upstream notice is retained below for portions derived from that work.
+Portions of this project derive from Thomas Mustier's [codex-computer-use-mcp](https://github.com/tmustier/codex-computer-use-mcp), licensed under MIT.
 
 ## Upstream MIT notice
 
@@ -33,11 +24,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-## Proprietary runtime
+## Official components
 
-This repository does not distribute ChatGPT.app, Codex, Codex Computer Use.app,
-SkyComputerUseClient, SkyComputerUseService, credentials, screenshots or private
-logs. Installation uses the user's own locally installed official application.
-Those proprietary components are not covered by this repository's MIT license.
+ChatGPT.app, Codex and Computer Use binaries are not included in this repository. Installation uses the user's locally installed official components, which are not covered by this project's MIT license.
 
 This is an independent project, not produced, endorsed or supported by OpenAI.

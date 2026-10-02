@@ -1,18 +1,15 @@
 # Security
 
-Treat access to this stdio MCP service as access to the logged-in user's desktop.
-Only use a trusted SSH account and controller. Do not expose it on an unauthenticated
-network listener. Native operations can access private application data.
+## Desktop access
 
-The bridge verifies official signatures, isolates configuration and credentials,
-never requests model inference, checks tool arguments, serializes operations and
-cancels unsupported approvals. These controls do not replace macOS TCC or provide
-a system-wide network/billing guarantee.
+A connected client can read and operate the logged-in user's Mac apps. Use a trusted SSH account and controller. Do not expose the service through an unauthenticated network listener. App text and screenshots can contain private data.
 
-The optional privileged launcher accepts no arguments, requires root-controlled
-parent directories and drops to the intended desktop user before executing any
-user-writable code. Never extend its sudoers rule to arbitrary launchctl commands.
+## Controls
 
-Report vulnerabilities to the repository owner through GitHub's private reporting
-feature when available. Do not include credentials or personal screenshots in a
-public issue. The proprietary runtime must be updated through its official source.
+The bridge verifies signed components, isolates credentials, validates tool arguments, serializes calls and cancels unsupported approvals. It does not request model inference. These controls do not replace macOS permissions or provide system-wide network or usage auditing.
+
+The optional GUI launcher accepts no arguments, requires root-controlled directories and drops privileges before running user-writable code. Keep its sudoers rule limited to that launcher.
+
+## Reporting
+
+Report vulnerabilities privately to the repository owner, using GitHub private reporting when enabled. Leave credentials, private screenshots and sensitive logs out of public issues. Obtain proprietary runtime updates from the official source.
