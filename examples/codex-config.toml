@@ -1,0 +1,8 @@
+# Put this on the REMOTE MCP CLIENT machine (for example, Debian).
+# Replace `mac-host` with an SSH host alias from ~/.ssh/config.
+
+[mcp_servers.mac-computer-use]
+command = "ssh"
+args = ["-o", "BatchMode=yes", "-o", "ConnectTimeout=10", "-T", "mac-host", "sudo", "-n", "/usr/local/sbin/codex-computer-use-gui"]
+startup_timeout_sec = 30
+tool_timeout_sec = 180
