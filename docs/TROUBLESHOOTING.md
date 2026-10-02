@@ -1,69 +1,82 @@
 # Troubleshooting
 
-Run `bash scripts/doctor.sh`, then `bash scripts/smoke-local.sh`. Record the
-actual error and versions before changing configuration. Never infer success
-from process liveness or a signature/status check alone.
+Start with the local checks and keep the error message and component versions:
 
-## Missing runtime or signature failure
+```bash
+bash scripts/doctor.sh
+bash scripts/smoke-local.sh
+```
 
-Install official ChatGPT.app under `/Applications`, then rerun the installer.
-Supported Codex layouts include `Contents/Resources/codex` and the nested
-`codex-cli/CodexCLI.app/Contents/MacOS/codex` layout. Runtime extraction supports
-the bundled `cua_node/.../@oai/sky` and legacy computer-use plugin locations.
-Unsupported layouts fail explicitly; no arbitrary executable is substituted.
-Do not re-sign components, disable signature checks or remove quarantine to
-silence a failure. Existing per-user runtimes are not overwritten automatically.
-If an application update causes a mismatch, preserve the old runtime before
-removing it and rerunning installation.
+A successful read needs app text and a screenshot. A running process or successful signature check alone does not confirm GUI access.
 
-## -10005: app-server exited
+## Missing components or invalid signature
 
-This is an error summary, not proof that an account must be signed in. Check
-that the official Codex executable is found in the native service PATH, both
-isolated home variables are present, and the runtime mapping exists. The
-standalone implementation includes these compatibility settings directly.
-Capture a fresh error after an update rather than applying old text patches.
+Install official ChatGPT.app in `/Applications`, then rerun the installer. It supports the bundled Codex and Computer Use layouts listed in the runtime code. Unrecognized layouts stop installation.
 
-## -600 through SSH only
+Existing components are verified, not replaced automatically. If an update causes a mismatch, back up the old per-user runtime before removing it and reinstalling. Use official components; keep signature checks enabled.
 
-Compare a local smoke test with the actual remote call. An SSH session can have
-different GUI/audit-session access. Install the optional launcher using
-`bash scripts/install.sh --with-ssh-gui`, and use the matching SSH configuration.
-The intended user must own the active desktop. A password prompt under
-`sudo -n` indicates the fixed launcher rule is not installed or does not match.
-Do not grant unrestricted NOPASSWD access to launchctl or a user-writable script.
+## `-10005`: app-server exited
 
-## macOS permissions or runtime consent
+Check the Codex executable in the service's `PATH`, the private `CODEX_HOME` and `CODEX_SQLITE_HOME`, and the runtime link. These are set by the bridge. After a ChatGPT.app update, record the new versions and error for a compatibility report.
 
-Enable the installed **Codex Computer Use.app** in Accessibility and Screen &
-System Audio Recording. Automation (AppleEvents) is a separate permission.
-`bash scripts/tcc-diagnose.sh 5` prints matching recent TCC records. Review them
-locally before sharing; they can contain process paths and application names.
-This repository never edits TCC.db. Unsupported MCP consent requests are
-cancelled, not automatically approved. A client without the needed consent
-capability cannot complete such a request.
+This error alone does not establish that sign-in is required.
+
+## `-600` only over SSH
+
+Test locally first. If that works, install the desktop-session launcher on the Mac:
+
+```bash
+bash scripts/install.sh --with-ssh-gui
+```
+
+Use the [remote configuration](../examples/codex-config.toml) and confirm the SSH account is the active desktop user. A password error from `sudo -n` means the launcher rule is missing or does not match. Keep sudo access limited to the fixed launcher.
+
+## Permission or approval errors
+
+Enable **Codex Computer Use** under Accessibility and Screen & System Audio Recording. Automation (AppleEvents) is a separate permission.
+
+To inspect recent permission records:
+
+```bash
+bash scripts/tcc-diagnose.sh 5
+```
+
+Review paths and app names before sharing logs. The project does not edit the TCC database. If a client cannot handle a required approval request, the request is cancelled; use a client that supports it.
 
 ## Session already in use
 
-Close the other local/remote MCP connection and retry. The lock is under
-`~/.local/state/codex-computer-use-remote/session.lock/owner.json`. A hard crash
-can leave a stale lock. Inspect the recorded PID and your process list; only
-remove that lock directory after confirming its owner no longer exists and
-no Computer Use session is running. There is no force-unlock command that might
-interrupt somebody else's session. Restarting a client may leave an idle native
-session for up to 120 seconds if the transport has not actually disconnected.
+Close the other MCP connection and retry. Lock details are stored in:
+
+```text
+~/.local/state/codex-computer-use-remote/session.lock/owner.json
+```
+
+After a crash, remove a stale lock only after confirming that its owner has exited and no Computer Use session is running. A connection that remains open may hold an idle session for up to 120 seconds.
 
 ## State required before an action
 
-Call get_app_state again, using the exact app argument you will use for the
-next action. Element identifiers are session-local. They are discarded after
-an error, cancellation, idle expiry or disconnect. Do not retry a click against
-an old identifier after reconnecting.
+Call `get_app_state` with the exact `app` argument for the next action. Element identifiers expire after an error, cancellation, disconnect or idle timeout. Read the new state before retrying an action.
 
-## Upgrade or uninstall
+## Upgrade and uninstall
 
-`bash scripts/rollback.sh` restores the saved user-level wrapper. The GUI launcher
-and official runtime remain intact. Installation backups and v0.1's managed
-upstream checkout are intentionally retained, but v0.2 no longer loads upstream
-code or node_modules. Uninstall removes only recognized launchers. Account
-state, official apps, private captures and unrelated processes are not removed.
+Update the project and rerun the installer. To restore the previous startup script:
+
+```bash
+bash scripts/rollback.sh
+```
+
+To remove the project's launchers:
+
+```bash
+bash scripts/uninstall.sh
+```
+
+Version directories, backups, official components and account data remain. Old v0.1 installations are retained for rollback.
+
+To also remove a runtime created by this installer:
+
+```bash
+bash scripts/uninstall.sh --remove-runtime
+```
+
+A runtime that existed before installation is preserved. ChatGPT.app is not removed.
