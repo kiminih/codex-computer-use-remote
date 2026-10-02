@@ -2,15 +2,22 @@
 
 ## Standalone 0.2.0
 
-Recorded for this source revision on 2026-10-01:
+Recorded on 2026-10-01 (Pacific time; CI completed on 2026-10-02 UTC):
 
 | Check | Result | Scope |
 | --- | --- | --- |
-| `node scripts/check.mjs` | Passed | JavaScript/shell syntax and empty npm dependency sets |
-| `node --test test/*.test.mjs` | 80 passed, 0 failed | Linux, Node.js 22.16.0; standard-library tests and local subprocess fixtures |
+| `node scripts/check.mjs` | 21 checks passed | JavaScript/shell syntax and empty npm dependency sets |
+| Local `node --test test/*.test.mjs` | 80 passed, 0 failed | Linux, Node.js 22.16.0; standard-library tests and local subprocess fixtures |
+| GitHub Actions: Ubuntu | Passed | The same syntax and automated test suite on `ubuntu-latest` |
+| GitHub Actions: macOS | 80 passed, 0 failed | macOS 14.8.9 ARM64, Node.js 22.23.2; the same syntax and automated test suite |
 | Fresh install on a physical Mac | Not run | Requires user-owned ChatGPT.app and macOS permissions |
 | Signed runtime Finder screenshot on 0.2.0 | Not run | Do not substitute the historical result below |
 | SSH → Aqua → Finder on 0.2.0 | Not run | Requires the target Mac and remote client |
+
+CI evidence: [Tests run 36964352046](https://github.com/kiminih/codex-computer-use-remote/actions/runs/36964352046).
+Both jobs completed successfully before PR #1 was merged. The tested source
+commit was `b1b274b26f1700dbdee8277f5d279aa028435743`, with source tree
+`45198267fe4433513252e051e5ea97c82c69dd45`.
 
 The suite covers schemas, bounded and fragmented JSONL, protocol negotiation,
 initialization, request correlation, cancellation, consent responses, screenshot
@@ -21,8 +28,8 @@ SIGINT and SIGTERM teardown are exercised with real fixture subprocesses.
 
 Fixtures do not simulate the complete proprietary runtime, signatures, TCC,
 LaunchServices, Aqua sessions, workspace entitlements or app-specific behavior.
-GitHub Actions is configured to run the same suite on Linux and macOS; the
-workflow result is separate evidence and is not predeclared successful here.
+The macOS CI result validates this test suite on macOS, not live Computer Use
+against an installed ChatGPT.app or an interactive Finder desktop.
 
 ## Historical compatibility implementation (before the rewrite)
 
