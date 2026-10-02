@@ -1,58 +1,69 @@
 # Troubleshooting
 
-## `-10005: codex app-server exited before returning a response`
+Run `bash scripts/doctor.sh`, then `bash scripts/smoke-local.sh`. Record the
+actual error and versions before changing configuration. Never infer success
+from process liveness or a signature/status check alone.
 
-Check these in order:
+## Missing runtime or signature failure
 
-1. `scripts/doctor.sh`
-2. Confirm the per-user runtime exists at:
-   `~/.codex/computer-use/Codex Computer Use.app`
-3. Confirm the patched checkout was rebuilt after applying the patch.
-4. Confirm the ChatGPT-bundled Codex directory is on the broker environment PATH.
-5. Confirm the nested service receives `CODEX_HOME` and `CODEX_SQLITE_HOME`.
+Install official ChatGPT.app under `/Applications`, then rerun the installer.
+Supported Codex layouts include `Contents/Resources/codex` and the nested
+`codex-cli/CodexCLI.app/Contents/MacOS/codex` layout. Runtime extraction supports
+the bundled `cua_node/.../@oai/sky` and legacy computer-use plugin locations.
+Unsupported layouts fail explicitly; no arbitrary executable is substituted.
+Do not re-sign components, disable signature checks or remove quarantine to
+silence a failure. Existing per-user runtimes are not overwritten automatically.
+If an application update causes a mismatch, preserve the old runtime before
+removing it and rerunning installation.
 
-The compatibility patch addresses all five for the tested build.
+## -10005: app-server exited
 
-## `-600 procNotFound`
+This is an error summary, not proof that an account must be signed in. Check
+that the official Codex executable is found in the native service PATH, both
+isolated home variables are present, and the runtime mapping exists. The
+standalone implementation includes these compatibility settings directly.
+Capture a fresh error after an update rather than applying old text patches.
 
-If local Finder inspection succeeds but an SSH-launched broker returns `-600`,
-use the optional GUI/Aqua launcher:
+## -600 through SSH only
 
-```bash
-./scripts/install.sh --with-ssh-gui
-```
+Compare a local smoke test with the actual remote call. An SSH session can have
+different GUI/audit-session access. Install the optional launcher using
+`bash scripts/install.sh --with-ssh-gui`, and use the matching SSH configuration.
+The intended user must own the active desktop. A password prompt under
+`sudo -n` indicates the fixed launcher rule is not installed or does not match.
+Do not grant unrestricted NOPASSWD access to launchctl or a user-writable script.
 
-Then use `sudo -n /usr/local/sbin/codex-computer-use-gui` as the SSH remote
-command in your MCP configuration.
+## macOS permissions or runtime consent
 
-## AppleEvents denied for `sshd-keygen-wrapper`
+Enable the installed **Codex Computer Use.app** in Accessibility and Screen &
+System Audio Recording. Automation (AppleEvents) is a separate permission.
+`bash scripts/tcc-diagnose.sh 5` prints matching recent TCC records. Review them
+locally before sharing; they can contain process paths and application names.
+This repository never edits TCC.db. Unsupported MCP consent requests are
+cancelled, not automatically approved. A client without the needed consent
+capability cannot complete such a request.
 
-Inspect TCC logs:
+## Session already in use
 
-```bash
-./scripts/tcc-diagnose.sh
-```
+Close the other local/remote MCP connection and retry. The lock is under
+`~/.local/state/codex-computer-use-remote/session.lock/owner.json`. A hard crash
+can leave a stale lock. Inspect the recorded PID and your process list; only
+remove that lock directory after confirming its owner no longer exists and
+no Computer Use session is running. There is no force-unlock command that might
+interrupt somebody else's session. Restarting a client may leave an idle native
+session for up to 120 seconds if the transport has not actually disconnected.
 
-A known SSH failure mode looks like:
+## State required before an action
 
-```text
-responsible_path=/usr/libexec/sshd-keygen-wrapper
-access to kTCCServiceAppleEvents denied
-```
+Call get_app_state again, using the exact app argument you will use for the
+next action. Element identifiers are session-local. They are discarded after
+an error, cancellation, idle expiry or disconnect. Do not retry a click against
+an old identifier after reconnecting.
 
-This repository deliberately does not edit the TCC database automatically.
-If your host shows this exact denial, use a reviewed/manual TCC repair approach
-and keep a backup. The `macuse` project documents one such SSH repair workflow:
-https://github.com/fitchmultz/macuse
+## Upgrade or uninstall
 
-## Accessibility / screen capture
-
-macOS privacy controls still apply. Add/enable **Codex Computer Use** in:
-
-- System Settings → Privacy & Security → Accessibility
-- System Settings → Privacy & Security → Screen & System Audio Recording
-
-## Locked screen
-
-Assume an unlocked, logged-in desktop session. This project does not attempt to
-bypass the macOS lock screen.
+`bash scripts/rollback.sh` restores the saved user-level wrapper. The GUI launcher
+and official runtime remain intact. Installation backups and v0.1's managed
+upstream checkout are intentionally retained, but v0.2 no longer loads upstream
+code or node_modules. Uninstall removes only recognized launchers. Account
+state, official apps, private captures and unrelated processes are not removed.

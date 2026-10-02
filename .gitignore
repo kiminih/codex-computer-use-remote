@@ -2,7 +2,9 @@
 *.log
 *.tmp
 *.bak
+*.backup-*
 node_modules/
 work/
+coverage/
 __pycache__/
 *.pyc

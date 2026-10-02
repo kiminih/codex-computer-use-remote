@@ -1,0 +1,10 @@
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { serve } from '../../lib/mcp-stdio.mjs';
+import { ComputerUse, createSession } from '../../lib/computer-use.mjs';
+const fixture = fileURLToPath(new URL('./app-server.mjs', import.meta.url));
+const [stateDir, app] = process.argv.slice(2);
+const computer = new ComputerUse({ factory: opts => createSession({ ...opts, stateDir, resolve: () => ({ codex: process.execPath, app, client: fixture, service: '/nonexistent/test-service', brokerVersion: 'fixture', clientBuild: 'fixture' }), launch: (_c, _a, options) => spawn(process.execPath, [fixture, 'normal'], options) }) });
+const server = serve({ computer, status: () => ({ testFixture: true }) });
+for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.once(signal, () => { void server.close(); });
+await server.done; process.stdin.pause();
